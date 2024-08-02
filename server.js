@@ -15,18 +15,19 @@ const REDIRECT_URI = process.env.REDIRECT_URI;
 
 let accessToken = '';
 
-// Serve the test page
 app.get('/test', (req, res) => {
     res.sendFile(path.join(__dirname, 'test.html'));
 });
 
-// Route to initiate the OAuth flow
+app.get('/breakoutRooms', (req, res) => {
+    res.sendFile(path.join(__dirname, 'breakoutRooms.html'));
+});
+
 app.get('/oauth/initiate', (req, res) => {
     const oauthURL = `https://zoom.us/oauth/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
     res.redirect(oauthURL);
 });
 
-// OAuth redirect endpoint
 app.get('/oauth/callback', async (req, res) => {
     const authorizationCode = req.query.code;
 
@@ -44,14 +45,13 @@ app.get('/oauth/callback', async (req, res) => {
         });
 
         accessToken = response.data.access_token;
-        res.send('OAuth success! You can close this window.');
+        res.redirect('/breakoutRooms'); // Redirect to breakoutRooms page after successful authentication
     } catch (error) {
         console.error('Error fetching access token:', error);
         res.status(500).send('Error during OAuth process.');
     }
 });
 
-// Endpoint to verify the access token
 app.get('/verify-token', async (req, res) => {
     try {
         const response = await axios.get('https://api.zoom.us/v2/users/me', {
@@ -66,7 +66,6 @@ app.get('/verify-token', async (req, res) => {
     }
 });
 
-// Endpoint to create breakout rooms
 app.post('/createBreakoutRooms', async (req, res) => {
     const { meetingId, breakoutRooms } = req.body;
 
