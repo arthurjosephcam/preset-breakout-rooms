@@ -102,7 +102,7 @@
                     document.getElementById('success').textContent = 'Room created successfully!';
                     document.getElementById('error').textContent = '';
                 } else {
-                    document.getElementById('error').textContent = 'Error creating room: ' + (result.error || 'Unknown error');
+                    document.getElementById('error').textContent = 'Error creating room: ' + JSON.stringify(result.error || 'Unknown error');
                     document.getElementById('success').textContent = '';
                 }
             } catch (error) {

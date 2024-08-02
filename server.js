@@ -71,7 +71,7 @@ app.post('/createBreakoutRooms', async (req, res) => {
 
     try {
         const response = await axios({
-            method: 'post',
+            method: 'patch',
             url: `https://api.zoom.us/v2/meetings/${meetingId}/batch`,
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -91,8 +91,8 @@ app.post('/createBreakoutRooms', async (req, res) => {
 
         res.json({ success: true, data: response.data });
     } catch (error) {
-        console.error('Error creating breakout rooms:', error);
-        res.status(500).send('Error creating breakout rooms.');
+        console.error('Error creating breakout rooms:', error.response ? error.response.data : error.message);
+        res.status(500).json({ success: false, error: error.response ? error.response.data : error.message });
     }
 });
 
